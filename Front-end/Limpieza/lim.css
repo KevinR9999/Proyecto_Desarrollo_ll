@@ -1,0 +1,102 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Century Gothic', sans-serif;
+}
+
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.video-background video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.glass-container {
+    position: relative;
+    width: 80%;
+    margin: 50px auto;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+}
+
+.product-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    padding: 5px;
+}
+
+.product {
+    flex: 1 1 200px; /* mofica el ancho de las cajas de cada producto*/
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.product:hover {
+    transform: translateY(-5px);
+}
+
+.product img {
+    width: 100%;
+    border-radius: 5px;
+}
+
+.product h2 {
+    margin-top: 0;
+}
+
+.product p {
+    margin: 10px 0;
+}
+
+.product a {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.product a:hover {
+    background-color: #555;
+}
+
+        .cart-container {
+            margin: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .total-price {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .btn-send-whatsapp {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #25D366;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }

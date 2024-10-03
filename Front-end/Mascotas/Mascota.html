@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MASCOTAS</title>
+    <link rel="stylesheet" href="Ma.css">
+    <script src="../JS/carri.js" defer></script>
+</head>
+<body>
+    <div class="video-background">
+        <video autoplay loop muted>
+            <source src="../img/video3.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="glass-container">
+        <center><h1>MASCOTAS</h1></center>
+        <div class="product-container">
+            <div class="product">
+                <img src="../img/Mascota/1.jpg">
+                <center><h3>SALSA PARA GATOS</h3></center>
+                <p>Precio: $9,000</p>
+                <a href="#" class="buy-button" data-name="SALSA PARA GATOS" data-price="9000">Comprar</a>
+            </div>
+            <div class="product">
+                <img src="../img/Mascota/2.jpg">
+                <center><h3>SALSA PARA PERROS SABOR A POLLO</h3></center>
+                <p>Precio: $9,000</p>
+                <a href="#" class="buy-button" data-name="SALSA PARA PERROS SABOR A POLLO" data-price="9000">Comprar</a>
+            </div>
+            <div class="product">
+                <img src="../img/Mascota/3.jpg">
+                <center><h3>SALSA PARA PERROS SABOR A CARNE</h3></center>
+                <p>Precio: $9,000</p>
+                <a href="#" class="buy-button" data-name="ALSA PARA PERROS SABOR A POLLO" data-price="9000">Comprar</a>
+            </div>
+            <div class="product">
+                <img src="../img/Mascota/4.jpeg">
+                <center><h3>AMBIENTADOR PARA ARENA DE GATOS</h3></center>
+                <p>Precio: $12,000</p>
+                <a href="#" class="buy-button" data-name="AMBIENTADOR PARA ARENA DE GATOS" data-price="12000">Comprar</a>
+            </div>
+            <div class="product">
+                <img src="../img/Mascota/5.png">
+                <center><h3>ARENA PARA GATOS</h3></center>
+                <p>Precio: $18,000</p>
+                <a href="#" class="buy-button" data-name="ARENA PARA GATOS" data-price="18000">Comprar</a>
+            </div>
+            <div class="product">
+                <img src="../img/Mascota/6.jpg">
+                <center><h3>BAÑO SECO PARA PERROS</h3></center>
+                <p>Precio: $17,000</p>
+                <a href="#" class="buy-button" data-name="BAÑO SECO PARA PERROS" data-price="17000">Comprar</a>
+            </div>
+            <div class="product">
+                <img src="../img/Mascota/7.jpg">
+                <center><h3>BAÑO SECO PARA GATOS</h3></center>
+                <p>Precio: $17,000</p>
+                <a href="#" class="buy-button" data-name="BAÑO SECO PARA GATOS" data-price="17000">Comprar</a>
+            </div>
+            <div class="product">
+                <img src="../img/Mascota/8.png">
+                <center><h3>CARNITAS DE RES SNACK PARA PERROS</h3></center>
+                <p>Precio: $15,000</p>
+                <a href="#" class="buy-button" data-name="MARCADORES PRIMAVERA NEON" data-price="15000">Comprar</a>
+            </div>
+            <!-- Agrega más productos aquí -->
+        </div>
+    </div>
+
+    <div class="cart-container">
+        <h2>Carrito de Compras</h2>
+        <div id="cart-items"></div>
+        <p class="total-price">Total: $<span id="total-price">0</span></p>
+        <button class="btn-send-whatsapp" onclick="sendToWhatsApp()">Enviar a WhatsApp</button>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Dollar GO</p>
+    </footer>
+</body>
+</html>

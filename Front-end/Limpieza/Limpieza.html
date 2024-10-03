@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIMPIEZA</title>
+    <link rel="stylesheet" href="lim.css">
+    <script src="../JS/carri.js" defer></script>
+</head>
+<body>
+    <div class="video-background">
+        <video autoplay loop muted>
+            <source src="../img/video3.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="glass-container">
+        <center><h1>LIMPIEZA</h1></center>
+        <div class="product-container">
+            <div class="product">
+                <img src="../img/Limpieza/1.jpg">
+                <center><h3>DETERGENTE LÍQUIDO ROPA CLÁSICA TANTE</h3></center>
+                <p>Precio: $14,000</p>
+                <a href="#" class="buy-button" data-name="DETERGENTE LÍQUIDO ROPA CLÁSICA TANTE" data-price="14000">Comprar</a>
+            </div>
+            <div class="product">
+                <img src="../img/Limpieza/2.jpg">
+                <center><h3>DETERGENTE LÍQUIDO ROPA COLOR TANTE</h3></center>
+                <p>Precio: $14,000</p>
+                <a href="#" class="buy-button" data-name="DETERGENTE LÍQUIDO ROPA COLOR TANTE" data-price="14000">Comprar</a>
+            </div>
+            <div class="product">
+                <img src="../img/Limpieza/3.jpg">
+                <center><h3>DETERGENTE LÍQUIDO ROPA OSCURA TANTE</h3></center>
+                <p>Precio: $14,000</p>
+                <a href="#" class="buy-button" data-name="DETERGENTE LÍQUIDO ROPA OSCURA TANTE" data-price="14000">Comprar</a>
+            </div>
+            <div class="product">
+                <img src="../img/Limpieza/4.jpg">
+                <center><h3>QUITAMANCHAS EN POLVO ROPA BLANCA TANTE</h3></center>
+                <p>Precio: $7,000</p>
+                <a href="#" class="buy-button" data-name="QUITAMANCHAS EN POLVO ROPA BLANCA TANTE" data-price="7000">Comprar</a>
+            </div>
+            <div class="product">
+                <img src="../img/Limpieza/5.jpg">
+                <center><h3>QUITAMANCHAS EN POLVO ROPA COLOR TANTE</h3></center>
+                <p>Precio: $7,000</p>
+                <a href="#" class="buy-button" data-name="QUITAMANCHAS EN POLVO ROPA COLOR TANTE" data-price="7000">Comprar</a>
+            </div>
+            <div class="product">
+                <img src="../img/Limpieza/6.jpg">
+                <center><h3>QUITAMANCHAS LÍQUIDO ROPA BLANCA TANTE</h3></center>
+                <p>Precio: $5,000</p>
+                <a href="#" class="buy-button" data-name="QUITAMANCHAS LÍQUIDO ROPA BLANCA TANTE" data-price="5000">Comprar</a>
+            </div>
+            <div class="product">
+                <img src="../img/Limpieza/7.jpg">
+                <center><h3>QUITAMANCHAS LÍQUIDO ROPA COLOR TANTE</h3></center>
+                <p>Precio: $5,000</p>
+                <a href="#" class="buy-button" data-name="QUITAMANCHAS LÍQUIDO ROPA COLOR TANTE" data-price="14000">Comprar</a>
+            </div>
+            <div class="product">
+                <img src="../img/Limpieza/8.jpg">
+                <center><h3>SUAVIZANTE PRIMAVERAL TANTE</h3></center>
+                <p>Precio: $14,000</p>
+                <a href="#" class="buy-button" data-name="SUAVIZANTE PRIMAVERAL TANTE" data-price="14000">Comprar</a>
+            </div>
+            <!-- Agrega más productos aquí -->
+        </div>
+    </div>
+
+    <div class="cart-container">
+        <h2>Carrito de Compras</h2>
+        <div id="cart-items"></div>
+        <p class="total-price">Total: $<span id="total-price">0</span></p>
+        <button class="btn-send-whatsapp" onclick="sendToWhatsApp()">Enviar a WhatsApp</button>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Dollar GO</p>
+    </footer>
+</body>
+</html>
