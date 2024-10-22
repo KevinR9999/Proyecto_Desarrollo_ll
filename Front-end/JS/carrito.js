@@ -1,57 +1,158 @@
-const cartItems = [];
-const cartContainer = document.getElementById('cart-items');
-const totalPriceElement = document.getElementById('total-price');
+let carrito = [];
+let total = 0;
 
-document.querySelectorAll('.buy-button').forEach(button => {
-    button.addEventListener('click', (event) => {
-        event.preventDefault(); // Prevenir comportamiento predeterminado
-        const name = button.getAttribute('data-name');
-        const price = parseInt(button.getAttribute('data-price'));
-        addToCart(name, price);
-    });
-});
-
-function addToCart(name, price) {
-    cartItems.push({ name, price });
-    updateCart();
+function agregarAlCarrito(nombre, precio) {
+    carrito.push({ nombre, precio });
+    total += precio;
+    actualizarCarrito();
 }
 
-function removeFromCart(index) {
-    cartItems.splice(index, 1); // Eliminar el elemento del array en el índice dado
-    updateCart();
-}
+function actualizarCarrito() {
+    const listaCarrito = document.getElementById('lista-carrito');
+    const totalCarrito = document.getElementById('total');
+    const contadorProductos = document.getElementById('contador-productos');
 
-function updateCart() {
-    cartContainer.innerHTML = '';
-    let totalPrice = 0;
-
-    cartItems.forEach((item, index) => {
-        const cartItemElement = document.createElement('div');
-        cartItemElement.classList.add('cart-item');
-        cartItemElement.innerHTML = `
-            <span>${item.name}</span>
-            <span>$${item.price.toLocaleString()}</span>
-            <button class="remove-button" data-index="${index}">Eliminar</button>
-        `;
-        cartContainer.appendChild(cartItemElement);
-        totalPrice += item.price;
+    listaCarrito.innerHTML = '';
+    carrito.forEach((item, index) => {
+        listaCarrito.innerHTML += `<li>${item.nombre} - $${item.precio.toFixed(3)} <button onclick="removerDelCarrito(${index})"><i class="fas fa-trash-alt"></i></button></li>`;
     });
 
-    totalPriceElement.textContent = totalPrice.toLocaleString();
-
-    // Añadir eventos de click a los botones de eliminación
-    document.querySelectorAll('.remove-button').forEach(button => {
-        button.addEventListener('click', (event) => {
-            const index = button.getAttribute('data-index');
-            removeFromCart(index);
-        });
-    });
+    totalCarrito.innerText = total.toFixed(3);
+    contadorProductos.innerText = carrito.length;
 }
 
-function sendToWhatsApp() {
-    const itemsText = cartItems.map(item => `${item.name}: $${item.price.toLocaleString()}`).join('\n');
-    const totalPrice = totalPriceElement.textContent;
-    const message = `Hola me interesaria adquirir los siguientes productos:\n\n${itemsText}\n\nTotal: $${totalPrice}`;
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=573137663929&text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+function removerDelCarrito(index) {
+    total -= carrito[index].precio;
+    carrito.splice(index, 1);
+    actualizarCarrito();
+}
+
+function toggleCarrito() {
+    const carritoDropdown = document.getElementById('carrito-dropdown');
+    carritoDropdown.classList.toggle('visible'); // Agrega o quita la clase 'visible'
+}
+
+function generarFacturaPDF() {
+    if (carrito.length === 0) {
+        alert("El carrito está vacío.");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Obtener datos del cliente
+    const nombreCliente = document.getElementById('nombre-cliente').value || "Sin nombre";
+    const direccionCliente = document.getElementById('direccion-cliente').value || "Sin dirección";
+
+    // Generar ID único para la factura
+    const idFactura = `#${Math.floor(Math.random() * 100000)}`; // Genera un ID aleatorio
+    const fecha = new Date().toLocaleDateString(); // Obtener la fecha actual
+
+    // Estilos
+    const titleFontSize = 22;
+    const headerFontSize = 18;
+    const bodyFontSize = 12;
+
+    // Título de la factura
+    doc.setFontSize(titleFontSize);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Factura de Compra', 20, 20);
+    
+    // Información del cliente
+    doc.setFontSize(headerFontSize);
+    doc.text('Detalles del Cliente:', 20, 40);
+    doc.setFontSize(bodyFontSize);
+    doc.text(`Nombre: ${nombreCliente}`, 20, 50); 
+    doc.text(`Dirección: ${direccionCliente}`, 20, 55); 
+    doc.text(`ID Factura: ${idFactura}`, 20, 60); // ID de la factura
+    doc.text(`Fecha: ${fecha}`, 20, 65); // Fecha de la factura
+
+    // Espacio entre la información del cliente y la tabla
+    doc.text('', 20, 70);
+
+    // Cabecera de la tabla
+    doc.setFontSize(headerFontSize);
+    doc.setFillColor(0, 102, 204); // Color de fondo
+    doc.rect(20, 75, 170, 10, 'F'); // Dibuja el fondo azul para la cabecera
+    doc.setTextColor(255); // Color del texto en blanco
+    doc.text('Producto', 25, 80);
+    doc.text('Precio', 145, 80);
+    
+    // Restablecer el color de texto
+    doc.setTextColor(0); // Color de texto negro
+
+    // Cuerpo de la tabla
+    doc.setFontSize(bodyFontSize);
+    carrito.forEach((item, index) => {
+        doc.text(item.nombre, 25, 90 + index * 10);
+        doc.text(`$${item.precio.toFixed(2)}`, 145, 90 + index * 10);
+    });
+
+    // Total
+    const totalYPosition = 90 + carrito.length * 10;
+    doc.setFontSize(headerFontSize);
+    doc.text(`Total: $${total.toFixed(2)}`, 20, totalYPosition + 10);
+
+    // Descargar el PDF
+    doc.save(`factura-${idFactura}.pdf`);
+}
+
+function realizarCompra() {
+    console.log("Función realizarCompra se está ejecutando");
+
+    // Obtener los datos del cliente
+    const nombreCliente = document.getElementById("nombre-cliente").value;
+    const direccionCliente = document.getElementById("direccion-cliente").value;
+    const total = document.getElementById("total").innerText;
+
+    // Verifica si los campos están llenos antes de proceder
+    if (!nombreCliente || !direccionCliente) {
+        alert("Por favor, completa todos los campos.");
+        return;
+    }
+
+    // Obtener los productos del carrito de manera eficiente
+    const listaCarrito = document.getElementById("lista-carrito").children;
+    let productos = Array.from(listaCarrito).map(item => item.innerText).join("\n");
+
+    // Crear el mensaje para WhatsApp
+    const mensaje = `Nombre del Cliente: ${nombreCliente}\n` +
+                    `Dirección del Cliente: ${direccionCliente}\n` +
+                    `Productos:\n${productos}\n` +
+                    `Total: $${total}`;
+
+    // Codificar el mensaje para la URL
+    const mensajeEncoded = encodeURIComponent(mensaje);
+
+    // Número de WhatsApp (en formato internacional)
+    const numeroTelefono = "573137663929";  // Cambia este número por tu número de WhatsApp
+
+    // Crear la URL de WhatsApp con el número de teléfono y el mensaje
+    const whatsappURL = `https://wa.me/573137663929?text=Hola%2C%20estoy%20interesado%20en%20tus%20productos.${mensajeEncoded}`;
+
+    // Enviar datos al archivo PHP para guardar en la base de datos
+    const data = {
+        nombre_cliente: nombreCliente,
+        direccion_cliente: direccionCliente,
+        productos: productos,
+        total: total
+    };
+
+    fetch('../../Back-end/guardar_compra.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(data); // Ver la respuesta del servidor
+        // Abrir WhatsApp después de guardar en la base de datos
+        window.open(whatsappURL, '_blank');
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
 }
