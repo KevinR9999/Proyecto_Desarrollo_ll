@@ -340,3 +340,20 @@ input[type="text"]::placeholder {
 #lista-carrito::-webkit-scrollbar-track {
     background-color: #f1f1f1;  /* Fondo del track (la pista de desplazamiento) */
 }
+
+.btn-cancelar, .btn-cancelar-compra { /*codigo para subir a git*/
+    background-color: #b90909;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 30px;
+    font-size: 1rem;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 10px;
+}
+
+.btn-cancelar:hover, .btn-cancelar-compra:hover {
+    background-color: #c70909;
+    transform: scale(1.05);
+}
