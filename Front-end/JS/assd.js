@@ -139,7 +139,7 @@ function realizarCompra() {
         total: total
     };
 
-    fetch('../../Back-end/guardar_compra.php', {
+    fetch('compra.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -155,4 +155,26 @@ function realizarCompra() {
     .catch((error) => {
         console.error('Error:', error);
     });
+}
+
+/*codigo para subir a git*/
+
+function cancelarCompra() {
+    // Vaciar la lista del carrito
+    const listaCarrito = document.getElementById('lista-carrito');
+    listaCarrito.innerHTML = '';
+
+    // Restablecer el total a 0
+    const total = document.getElementById('total');
+    total.textContent = '0.00';
+
+    // Restablecer el contador de productos a 0
+    const contadorProductos = document.getElementById('contador-productos');
+    contadorProductos.textContent = '0';
+
+    // Limpiar los campos de nombre y dirección del cliente
+    document.getElementById('nombre-cliente').value = '';
+    document.getElementById('direccion-cliente').value = '';
+
+    alert('Compra cancelada y carrito vaciado.');
 }
