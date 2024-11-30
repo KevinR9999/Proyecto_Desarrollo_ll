@@ -1,48 +1,48 @@
 <?php
-// Mostrar errores para desarrollo
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+header("Content-Type: application/json");
 
-// Verificar si el formulario fue enviado
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Recoger datos del formulario
-    $name = $_POST['name'];
-    $rating = $_POST['rating'];
-    $review = $_POST['review'];
+// Obtener los datos del formulario enviados como JSON
+$data = json_decode(file_get_contents('php://input'), true);
 
-    // Validar que los campos no estén vacíos
-    if (!empty($name) && !empty($rating) && !empty($review)) {
-        try {
-            // Conectar a la base de datos
-            $conn = new PDO("mysql:host=localhost;dbname=test", "root", "");
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            // Insertar los datos en la base de datos
-            $sql = "INSERT INTO reseñas (nombre, calificacion, resena) VALUES (:name, :rating, :review)";
-            $stmt = $conn->prepare($sql);
-
-            // Asignar los parámetros a los valores recogidos del formulario
-            $stmt->bindParam(':name', $name);
-            $stmt->bindParam(':rating', $rating);
-            $stmt->bindParam(':review', $review);
-
-            // Ejecutar la consulta
-            $stmt->execute();
-
-            // Devolver un mensaje de éxito
-            echo "Reseña guardada con éxito.";
-        } catch (PDOException $e) {
-            // Mostrar errores en caso de fallo
-            echo "Error: " . $e->getMessage();
-        }
-
-        // Cerrar la conexión
-        $conn = null;
-    } else {
-        echo "Por favor, completa todos los campos.";
-    }
-} else {
-    echo "Formulario no enviado correctamente.";
+// Verificar si los datos necesarios están presentes
+if (!isset($data['id_fac'], $data['nombre'], $data['calificacion'], $data['resena'], $data['fecha'])) {
+    echo json_encode(["error" => "Faltan datos para guardar la reseña."]);
+    exit();
 }
+
+// Asignar datos recibidos a variables
+$id_fac = $data['id_fac'];
+$nombre = $data['nombre'];
+$calificacion = (int)$data['calificacion']; // Asegurar que sea un entero
+$resena = $data['resena'];
+$fecha = $data['fecha']; // Fecha proporcionada por el frontend
+
+// Conexión a la base de datos
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "tienda"; // Cambia este valor si el nombre de tu base de datos es diferente
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verificar conexión
+if ($conn->connect_error) {
+    echo json_encode(["error" => "Conexión fallida: " . $conn->connect_error]);
+    exit();
+}
+
+// Insertar reseña en la base de datos
+$stmt = $conn->prepare("INSERT INTO resenas (id_fac, nombre, calificacion, resena, fecha) VALUES (?, ?, ?, ?, ?)");
+$stmt->bind_param("isiss", $id_fac, $nombre, $calificacion, $resena, $fecha);
+
+// Ejecutar la consulta y verificar si fue exitosa
+if ($stmt->execute()) {
+    echo json_encode(["message" => "Reseña guardada correctamente."]);
+} else {
+    echo json_encode(["error" => "Error al guardar la reseña: " . $stmt->error]);
+}
+
+// Cerrar la conexión
+$stmt->close();
+$conn->close();
 ?>
