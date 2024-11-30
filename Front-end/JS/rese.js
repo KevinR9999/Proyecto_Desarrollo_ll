@@ -18,64 +18,132 @@ function getAvatarByName(name) {
 const form = document.getElementById('reviewForm');
 const reviewList = document.getElementById('reviewList');
 let editingIndex = null; // Variable para saber si estamos editando una reseña
+let currentInvoiceId = null; // Variable para almacenar dinámicamente el id_fac
 
-document.addEventListener('DOMContentLoaded', loadReviews);
+// Establecer el id_fac dinámicamente (esto puede venir desde el backend)
+function setInvoiceId(id) {
+    currentInvoiceId = id;
+    console.log('ID de factura establecido:', currentInvoiceId);
+}
 
-form.addEventListener('submit', function(event) {
+// Cargar reseñas al inicio
+document.addEventListener('DOMContentLoaded', function () {
+    loadReviews();
+
+    // Aquí establecemos el id_fac dinámicamente. 
+    // Puedes obtener este valor desde el backend al cargar la página o por una API.
+    fetch('obtener_factura_actual.php') // Cambia a la ruta que devuelva el id_fac
+        .then(response => response.json())
+        .then(data => {
+            if (data.id_fac) {
+                setInvoiceId(data.id_fac);
+            } else {
+                console.error('No se pudo obtener el id_fac');
+            }
+        })
+        .catch(error => {
+            console.error('Error al obtener el id_fac:', error);
+        });
+});
+
+// Manejar el envío del formulario
+form.addEventListener('submit', function (event) {
     event.preventDefault();
-    
+
     const name = document.getElementById('name').value;
     const reviewText = document.getElementById('review').value;
     const rating = document.querySelector('input[name="rating"]:checked').value;
 
+    if (!currentInvoiceId) {
+        alert('No se ha establecido un ID de factura. Intenta recargar la página.');
+        return;
+    }
+
     const review = {
+        id_fac: currentInvoiceId, // Usar el id_fac actual
         name,
         reviewText,
         rating
     };
 
     if (editingIndex !== null) {
-        // Si estamos editando una reseña existente
+        // Editar reseña existente
         updateReview(review, editingIndex);
     } else {
-        // Si estamos agregando una nueva reseña
+        // Guardar una nueva reseña
         saveReview(review);
         addReviewToPage(review);
     }
 
     form.reset();
-    editingIndex = null; // Reiniciamos el índice de edición
+    editingIndex = null; // Reiniciar el estado de edición
 });
 
+// Guardar reseña en el servidor
 function saveReview(review) {
-    const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
-    reviews.push(review);
-    localStorage.setItem('reviews', JSON.stringify(reviews));
+    const data = {
+        id_fac: review.id_fac,
+        nombre: review.name,
+        resena: review.reviewText,
+        calificacion: review.rating,
+        fecha: new Date().toISOString().slice(0, 19).replace('T', ' ') // Formato YYYY-MM-DD HH:MM:SS
+    };
+
+    console.log('Enviando datos:', data);
+
+    fetch('guardar_resena.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Reseña guardada') {
+                console.log('Reseña guardada con éxito.');
+                loadReviews(); // Recargar las reseñas después de guardar
+            } else {
+                alert('Error al guardar la reseña: ' + (data.error || 'Desconocido'));
+            }
+        })
+        .catch(error => {
+            console.error('Error al guardar la reseña:', error);
+        });
 }
 
+// Cargar reseñas desde el servidor
 function loadReviews() {
-    const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
-    reviews.forEach((review, index) => addReviewToPage(review, index));
+    fetch('../../Back-end/guardar_resena.php') // Cambia la ruta según sea necesario
+        .then(response => response.json())
+        .then(data => {
+            reviewList.innerHTML = ''; // Limpiar la lista de reseñas
+            data.resenas.forEach((review, index) => addReviewToPage(review, index));
+        })
+        .catch(error => {
+            console.error('Error al cargar las reseñas:', error);
+        });
 }
 
+// Agregar reseña al DOM
 function addReviewToPage(review, index) {
     const reviewItem = document.createElement('div');
     reviewItem.classList.add('review-item');
 
     const avatarImg = document.createElement('img');
-    avatarImg.src = getAvatarByName(review.name);
+    avatarImg.src = getAvatarByName(review.nombre);
     avatarImg.alt = 'Avatar';
     avatarImg.classList.add('avatar');
 
     const reviewContent = document.createElement('div');
 
     const reviewTitle = document.createElement('h3');
-    reviewTitle.textContent = review.name;
+    reviewTitle.textContent = review.nombre;
 
     // Crear las estrellas visuales
     const stars = document.createElement('div');
     stars.classList.add('stars-display');
-    const starCount = parseInt(review.rating);
+    const starCount = review.calificacion;
     for (let i = 0; i < starCount; i++) {
         stars.innerHTML += '&#9733;'; // Estrella dorada
     }
@@ -84,55 +152,14 @@ function addReviewToPage(review, index) {
     }
 
     const reviewBody = document.createElement('p');
-    reviewBody.textContent = review.reviewText;
-
-    // Botón de borrar
-    const deleteBtn = document.createElement('button');
-    deleteBtn.classList.add('delete-btn');
-    deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-    deleteBtn.onclick = function() {
-        deleteReview(index);
-    };
-
-    // Botón de editar
-    const editBtn = document.createElement('button');
-    editBtn.classList.add('edit-btn');
-    editBtn.innerHTML = '<i class="fas fa-edit"></i>';
-    editBtn.onclick = function() {
-        loadReviewToForm(review, index);
-    };
+    reviewBody.textContent = review.resena;
 
     reviewContent.appendChild(reviewTitle);
     reviewContent.appendChild(stars);
     reviewContent.appendChild(reviewBody);
 
-    reviewItem.appendChild(avatarImg);  // Añadir el avatar
+    reviewItem.appendChild(avatarImg); // Añadir el avatar
     reviewItem.appendChild(reviewContent);
-    reviewItem.appendChild(editBtn);    // Añadir el botón de editar
-    reviewItem.appendChild(deleteBtn);  // Añadir el botón de borrar
 
     reviewList.appendChild(reviewItem);
-}
-
-function deleteReview(index) {
-    const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
-    reviews.splice(index, 1); // Elimina la reseña del array
-    localStorage.setItem('reviews', JSON.stringify(reviews)); // Actualiza localStorage
-    reviewList.innerHTML = ''; // Limpia la lista
-    loadReviews(); // Recarga la lista actualizada de reseñas
-}
-
-function loadReviewToForm(review, index) {
-    document.getElementById('name').value = review.name;
-    document.getElementById('review').value = review.reviewText;
-    document.querySelector(`input[name="rating"][value="${review.rating}"]`).checked = true;
-    editingIndex = index; // Establece el índice de edición
-}
-
-function updateReview(updatedReview, index) {
-    const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
-    reviews[index] = updatedReview; // Actualiza la reseña en el índice correspondiente
-    localStorage.setItem('reviews', JSON.stringify(reviews)); // Guarda en localStorage
-    reviewList.innerHTML = ''; // Limpia la lista
-    loadReviews(); // Recarga las reseñas actualizadas
 }
